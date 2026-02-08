@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	config "go_project_structure/config/env"
 	"net/http"
 	"time"
 )
@@ -12,9 +13,10 @@ type Config struct {
 }
 
 // constructor for Config
-func NewConfig(addr string) Config {
+func NewConfig() Config {
+	port := config.GetString("PORT", ":8080")
 	return Config{
-		Addr: addr,
+		Addr: port,
 	}
 }
 
