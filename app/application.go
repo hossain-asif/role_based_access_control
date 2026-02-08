@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	config "go_project_structure/config/env"
+	"go_project_structure/router"
 	"net/http"
 	"time"
 )
@@ -34,12 +35,12 @@ func NewApplication(config Config) Application {
 func (app *Application) Run() error {
 	server := &http.Server{
 		Addr:         app.Config.Addr,
-		Handler:      nil,
+		Handler:      router.SetupRouter(),
 		ReadTimeout:  10 * time.Second, // Set read timeout to 10 seconds
 		WriteTimeout: 10 * time.Second, // Set write timeout to 10 seconds
 	}
 
-	fmt.Println("Starting server on port: ", app.Config.Addr)
+	fmt.Println("Starting server on port", app.Config.Addr)
 
 	return server.ListenAndServe()
 }
