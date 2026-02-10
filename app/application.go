@@ -3,7 +3,10 @@ package app
 import (
 	"fmt"
 	config "go_project_structure/config/env"
+	"go_project_structure/controllers"
+	db "go_project_structure/db/repositories"
 	"go_project_structure/router"
+	"go_project_structure/services"
 	"net/http"
 	"time"
 )
@@ -23,19 +26,28 @@ func NewConfig() Config {
 
 type Application struct {
 	Config Config
+	Store  db.Storage
 }
 
 // constructor for Application
 func NewApplication(config Config) Application {
 	return Application{
 		Config: config,
+		Store:  *db.NewStorage(),
 	}
 }
 
 func (app *Application) Run() error {
+
+	ur := db.NewUserRepository()
+	us := services.NewUserService(ur)
+	uc := controllers.NewUserController(us)
+	uRouter := router.NewUserRouter(uc)
+
+
 	server := &http.Server{
 		Addr:         app.Config.Addr,
-		Handler:      router.SetupRouter(),
+		Handler:      router.SetupRouter(uRouter),
 		ReadTimeout:  10 * time.Second, // Set read timeout to 10 seconds
 		WriteTimeout: 10 * time.Second, // Set write timeout to 10 seconds
 	}
