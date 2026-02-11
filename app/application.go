@@ -26,14 +26,12 @@ func NewConfig() Config {
 
 type Application struct {
 	Config Config
-	Store  db.Storage
 }
 
 // constructor for Application
 func NewApplication(config Config) Application {
 	return Application{
 		Config: config,
-		Store:  *db.NewStorage(),
 	}
 }
 
@@ -43,7 +41,6 @@ func (app *Application) Run() error {
 	us := services.NewUserService(ur)
 	uc := controllers.NewUserController(us)
 	uRouter := router.NewUserRouter(uc)
-
 
 	server := &http.Server{
 		Addr:         app.Config.Addr,
