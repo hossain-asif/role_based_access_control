@@ -3,8 +3,9 @@ package app
 import (
 	"fmt"
 	config "go_project_structure/config/env"
+	dbConfig "go_project_structure/config/db"
 	"go_project_structure/controllers"
-	db "go_project_structure/db/repositories"
+	repo "go_project_structure/db/repositories"
 	"go_project_structure/router"
 	"go_project_structure/services"
 	"net/http"
@@ -37,7 +38,13 @@ func NewApplication(config Config) Application {
 
 func (app *Application) Run() error {
 
-	ur := db.NewUserRepository()
+	db, err := dbConfig.SetupDB()
+	if err != nil {
+		fmt.Println("Error setting up database.")
+		return err
+	}
+
+	ur := repo.NewUserRepository(db)
 	us := services.NewUserService(ur)
 	uc := controllers.NewUserController(us)
 	uRouter := router.NewUserRouter(uc)
