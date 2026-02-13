@@ -2,12 +2,11 @@ package app
 
 import (
 	"fmt"
-	config "go_project_structure/config/env"
 	dbConfig "go_project_structure/config/db"
-	"go_project_structure/controllers"
-	repo "go_project_structure/db/repositories"
+	config "go_project_structure/config/env"
+	"go_project_structure/internal/user"
 	"go_project_structure/router"
-	"go_project_structure/services"
+
 	"net/http"
 	"time"
 )
@@ -44,9 +43,9 @@ func (app *Application) Run() error {
 		return err
 	}
 
-	ur := repo.NewUserRepository(db)
-	us := services.NewUserService(ur)
-	uc := controllers.NewUserController(us)
+	ur := user.NewUserRepository(db)
+	us := user.NewUserService(ur)
+	uc := user.NewUserController(us)
 	uRouter := router.NewUserRouter(uc)
 
 	server := &http.Server{

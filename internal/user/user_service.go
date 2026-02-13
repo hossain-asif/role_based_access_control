@@ -1,8 +1,7 @@
-package services
+package user
 
 import (
 	"fmt"
-	db "go_project_structure/db/repositories"
 )
 
 type UserService interface {
@@ -15,10 +14,10 @@ type UserService interface {
 }
 
 type UserServiceImpl struct {
-	userRepository db.UserRepository
+	userRepository UserRepository
 }
 
-func NewUserService(_userRepository db.UserRepository) UserService {
+func NewUserService(_userRepository UserRepository) UserService {
 	return &UserServiceImpl{
 		userRepository: _userRepository,
 	}

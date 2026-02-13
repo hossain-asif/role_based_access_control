@@ -1,9 +1,8 @@
-package db
+package user
 
 import (
 	"errors"
 	"fmt"
-	"go_project_structure/models"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
@@ -11,8 +10,8 @@ import (
 
 type UserRepository interface {
 	Create(username string, email string, password string) error
-	GetByID(id string) (*models.User, error)
-	GetAll() ([]*models.User, error)
+	GetByID(id string) (*User, error)
+	GetAll() ([]*User, error)
 	Update(id string, username string, email string) error
 	Delete(id string) error
 }
@@ -77,7 +76,7 @@ func (u *UserRepositoryImpl) Create(username string, email string, password stri
 	return nil
 }
 
-func (u *UserRepositoryImpl) GetByID(id string) (*models.User, error) {
+func (u *UserRepositoryImpl) GetByID(id string) (*User, error) {
 	fmt.Println("Fetching user by id in user repository.")
 
 	// step 1: prepare the query
@@ -87,7 +86,7 @@ func (u *UserRepositoryImpl) GetByID(id string) (*models.User, error) {
 	row := u.db.Raw(query, id).Row()
 
 	// step 3: process the result
-	user := &models.User{}
+	user := &User{}
 	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -103,7 +102,7 @@ func (u *UserRepositoryImpl) GetByID(id string) (*models.User, error) {
 	return user, nil
 }
 
-func (u *UserRepositoryImpl) GetAll() ([]*models.User, error) {
+func (u *UserRepositoryImpl) GetAll() ([]*User, error) {
 	fmt.Println("Fetching all users in user repository.")
 
 	// step 1: prepare the query
@@ -130,9 +129,9 @@ func (u *UserRepositoryImpl) GetAll() ([]*models.User, error) {
 	// }
 
 	// step 4: process the result
-	var users []*models.User
+	var users []*User
 	for rows.Next() {
-		var user models.User
+		var user User
 		err := u.db.ScanRows(rows, &user)
 		if err != nil {
 			fmt.Printf("Error scanning row: %v\n", err)
@@ -205,5 +204,3 @@ func (u *UserRepositoryImpl) Delete(id string) error {
 	// step 5: return the result
 	return nil
 }
-
-

@@ -1,17 +1,17 @@
-package controllers
+package user
+
 
 import (
-	"go_project_structure/services"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
 type UserController struct {
-	UserService services.UserService
+	UserService UserService
 }
 
-func NewUserController(_userService services.UserService) *UserController {
+func NewUserController(_userService UserService) *UserController {
 	return &UserController{
 		UserService: _userService,
 	}
