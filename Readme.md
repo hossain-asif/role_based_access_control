@@ -1,26 +1,27 @@
-- Flat Folder Structure
+- Domain-Driven Design:
+In Domain-Driven Design (DDD), the application is divided into domains or bounded contexts, where each domain owns its own layers, including models, repositories, and services. This approach helps to isolate logic and keep the code domain-specific, promoting better organization and clarity.
 ```
-project/
-├── main.go
-├── config
-|   ├── db
-|   ├── env               # Application entry point
-├── router
-|   |–– router.go          # HTTP handlers
-├── controllers
-|   |–– handler.go          # HTTP handlers
-├── services
-|   |–– service.go              # Business logic
-├── db
-|   |–– repository       # Database repository
-|   |–– migrations
-├── utils.go            # Utility functions
-├── go.mod              # Go module file
-└── go.sum              # Go module dependency file
+project
+├── cmd                    # Command-related files
+│   └── app                # Application entry point
+│       └── main.go        # Main application logic
+├── internal               # Internal codebase
+│   ├── user               # Domain 'user'
+│   │   ├── handler.go     # User-specific handler
+│   │   ├── service.go     # User-specific service
+│   │   ├── repository.go  # User-specific repository
+│   │   └── user.go        # User model
+│   └── product            # Domain 'product'
+│       ├── handler.go     # Product-specific handler
+│       ├── service.go     # Product-specific service
+│       └── repository.go  # Product-specific repository
+├── pkg                    # Shared utilities
+├── configs                # Configuration files
+├── go.mod                 # Go module definition
+└── go.sum                 # Go module checksum file
 ```
 
 - used for
-    - Small Projects:
-    - Prototypes and MVPs
-    - Command-Line Tools
-    - Learning and Experimentation: Beneficial for beginners
+    - Complex Projects
+    - Decoupling and Scalability
+    - Modularity
