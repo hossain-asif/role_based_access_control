@@ -7,8 +7,10 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL
+    deleted_at TIMESTAMP NULL 
 );
+CREATE UNIQUE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_deleted_at ON users (deleted_at);
 -- +goose StatementEnd
 
 -- +goose Down
