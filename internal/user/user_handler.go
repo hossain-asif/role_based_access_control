@@ -18,7 +18,7 @@ func NewUserController(_userService UserService) *UserController {
 }
 
 func (uc *UserController) RegisterUser(w http.ResponseWriter, r *http.Request) {
-	uc.UserService.CreateUser("alicebob", "alicebob@example.com", "password123")
+	uc.UserService.CreateUser("bob", "bob@example.com", "password123")
 	w.Write([]byte("User registration end point"))
 }
 

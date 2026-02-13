@@ -5,10 +5,11 @@ import (
 	dbConfig "go_project_structure/config/db"
 	config "go_project_structure/config/env"
 	"go_project_structure/internal/user"
-	"go_project_structure/router"
 
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
 )
 
 // Config holds the configuration for the server.
@@ -37,6 +38,8 @@ func NewApplication(config Config) Application {
 
 func (app *Application) Run() error {
 
+	rootRouter := chi.NewRouter()
+
 	db, err := dbConfig.SetupDB()
 	if err != nil {
 		fmt.Println("Error setting up database.")
@@ -46,11 +49,12 @@ func (app *Application) Run() error {
 	ur := user.NewUserRepository(db)
 	us := user.NewUserService(ur)
 	uc := user.NewUserController(us)
-	uRouter := router.NewUserRouter(uc)
+	uRouter := user.NewUserRouter(uc)
+	uRouter.Register(rootRouter)
 
 	server := &http.Server{
 		Addr:         app.Config.Addr,
-		Handler:      router.SetupRouter(uRouter),
+		Handler:      rootRouter,
 		ReadTimeout:  10 * time.Second, // Set read timeout to 10 seconds
 		WriteTimeout: 10 * time.Second, // Set write timeout to 10 seconds
 	}

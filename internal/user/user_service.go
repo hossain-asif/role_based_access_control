@@ -5,7 +5,6 @@ import (
 )
 
 type UserService interface {
-	// Define methods for user service
 	CreateUser(username string, email string, password string) error
 	GetUserById(id string) error
 	GetAllUsers() error

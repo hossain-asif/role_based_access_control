@@ -1,16 +1,14 @@
-package router
+package user
 
 import (
-	"go_project_structure/internal/user"
-
 	"github.com/go-chi/chi/v5"
 )
 
 type UserRouter struct {
-	userController *user.UserController
+	userController *UserController
 }
 
-func NewUserRouter(_userController *user.UserController) Router {
+func NewUserRouter(_userController *UserController) *UserRouter {
 	return &UserRouter{
 		userController: _userController,
 	}
