@@ -4,7 +4,7 @@ import (
 	"fmt"
 	dbConfig "go_project_structure/config/db"
 	config "go_project_structure/config/env"
-	"go_project_structure/internal/user"
+	"go_project_structure/internal/router"
 
 	"net/http"
 	"time"
@@ -46,15 +46,13 @@ func (app *Application) Run() error {
 		return err
 	}
 
-	ur := user.NewUserRepository(db)
-	us := user.NewUserService(ur)
-	uc := user.NewUserController(us)
-	uRouter := user.NewUserRouter(uc)
-	uRouter.Register(rootRouter)
+	for _, registerFn := range router.DomainRegistries {
+		registerFn(db, rootRouter)
+	}
 
 	server := &http.Server{
 		Addr:         app.Config.Addr,
-		Handler:      rootRouter,
+		Handler:      rootRouter,       
 		ReadTimeout:  10 * time.Second, // Set read timeout to 10 seconds
 		WriteTimeout: 10 * time.Second, // Set write timeout to 10 seconds
 	}

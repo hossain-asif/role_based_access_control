@@ -1,15 +1,19 @@
 package router
 
-import "github.com/go-chi/chi/v5"
+import (
+	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
+)
 
 type Router interface {
 	Register(r chi.Router)
 }
 
-func SetupRouter(UserRouter Router) *chi.Mux {
-	chiRouter := chi.NewRouter()
+var DomainRegistries = []func(*gorm.DB, chi.Router){
+	func(db *gorm.DB, router chi.Router) {
+		RegisterRoutes(db, router).Register(router)
+	},
 
-	UserRouter.Register(chiRouter)
-
-	return chiRouter
+	// Add new modules here:
+	// role.RegisterRoutes,
 }
