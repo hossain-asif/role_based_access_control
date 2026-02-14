@@ -1,7 +1,7 @@
 package user
 
-
 import (
+	utils "go_project_structure/utils"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -18,14 +18,33 @@ func NewUserController(_userService UserService) *UserController {
 }
 
 func (uc *UserController) RegisterUser(w http.ResponseWriter, r *http.Request) {
-	uc.UserService.CreateUser("asif", "asif@example.com", "password123")
-	w.Write([]byte("User registration end point"))
+
+	RequestPayload := r.Context().Value("registration_payload").(registerUserRequest)
+
+	err := uc.UserService.CreateUser(RequestPayload.Name, RequestPayload.Email, RequestPayload.Password)
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError, "User registration failed.", err)
+		return
+	}
+	responsePayload := registerUserResponse{
+		Name:  RequestPayload.Name,
+		Email: RequestPayload.Email,
+	}
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User registration suucessful", responsePayload)
 }
 
 func (uc *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "id")
 	uc.UserService.GetUserById(userId)
-	w.Write([]byte("User get by id end point"))
+
+	response := map[string]interface{}{
+		"success": true,
+		"message": "Get user by id end point",
+		"data":    nil,
+		"error":   nil,
+	}
+	utils.WriteJSONResponse(w, http.StatusOK, response)
+
 }
 
 func (uc *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {

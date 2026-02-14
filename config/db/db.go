@@ -52,19 +52,3 @@ func SetupDB() (*gorm.DB, error) {
 
 }
 
-
-/*
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-INSERT INTO users (name, email, password) VALUES ('John Doe', 'john@example.com', 'password123');
-
-SELECT id, name, email FROM users;
-*/
