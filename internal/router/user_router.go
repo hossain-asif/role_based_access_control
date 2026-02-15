@@ -1,7 +1,9 @@
 package router
 
 import (
+	"go_project_structure/internal/middlewares"
 	"go_project_structure/internal/user"
+	"go_project_structure/utils"
 
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -26,10 +28,14 @@ func RegisterRoutes(db *gorm.DB, router chi.Router) *UserRouter {
 }
 
 func (ur *UserRouter) Register(r chi.Router) {
-	r.Use(user.RequestLoggerMiddleware)
-	r.With(user.UserRegisterRequestValidator).Post("/register", ur.userController.RegisterUser)
+	r.Use(middlewares.RequestLoggerMiddleware)
+	r.With(user.UserRegisterRequestValidator).Post("/signup", ur.userController.RegisterUser)
+	r.Post("/login", ur.userController.LoginUser)
 	r.Get("/profile/{id}", ur.userController.GetUserById)
 	r.Get("/profile", ur.userController.GetAllUsers)
-	r.With(user.UserUpdateRequestValidator).Patch("/profile/{id}", ur.userController.UpdateUser)
+	r.With(middlewares.RateLimitMiddleware, user.UserUpdateRequestValidator).Patch("/profile/{id}", ur.userController.UpdateUser)
 	r.Delete("/profile/{id}", ur.userController.DeleteUser)
+
+	// proxy routes
+	r.Get("/fake-store/*", utils.ProxyToService("https://fakestoreapi.com", "/fake-store"))
 }

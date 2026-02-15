@@ -21,7 +21,11 @@ func (uc *UserController) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	RequestPayload := r.Context().Value("registration_payload").(registerUserRequest)
 
-	err := uc.UserService.CreateUser(RequestPayload.Name, RequestPayload.Email, RequestPayload.Password)
+	err := uc.UserService.CreateUser(
+		RequestPayload.Name,
+		RequestPayload.Email, 
+		RequestPayload.Password,
+	)
 	if err != nil {
 		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError, "User registration failed.", err)
 		return
@@ -31,6 +35,25 @@ func (uc *UserController) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		Email: RequestPayload.Email,
 	}
 	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User registration suucessful", responsePayload)
+}
+
+func (uc *UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
+	var requestPayload = LoginUserRequest{}
+	err := utils.ReadJsonBody(r, &requestPayload)
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusBadRequest, "Invalid request payload", err)
+		return
+	}
+	
+	token, err := uc.UserService.LoginUser(requestPayload.Email, requestPayload.Password)
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusUnauthorized, "Login failed", err)
+		return
+	}
+	responsePayload := LoginUserResponse{
+		Token: token,
+	}
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "Login successful", responsePayload)
 }
 
 func (uc *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {

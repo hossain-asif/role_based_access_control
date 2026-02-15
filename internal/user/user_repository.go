@@ -14,6 +14,7 @@ type UserRepository interface {
 	GetAll() ([]*User, error)
 	Update(id string, username string, email string) error
 	Delete(id string) error
+	GetByEmail(email string) (*User, error)
 }
 
 type UserRepositoryImpl struct {
@@ -88,6 +89,32 @@ func (u *UserRepositoryImpl) GetByID(id string) (*User, error) {
 	// step 3: process the result
 	user := &User{}
 	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			fmt.Println("User not found.")
+			return nil, err
+		}
+		fmt.Printf("Error fetching user: %v\n", err)
+		return nil, err
+	}
+
+	// step 4: return the result
+	fmt.Printf("Fetched user: %+v\n", user)
+	return user, nil
+}
+
+func (u *UserRepositoryImpl) GetByEmail(email string) (*User, error) {
+	fmt.Println("Fetching user by email in user repository.")
+
+	// step 1: prepare the query	
+	query := "SELECT name, email, password FROM users WHERE email = ?"
+
+	// step 2: execute the query
+	row := u.db.Raw(query, email).Row()
+
+	// step 3: process the result
+	user := &User{}
+	err := row.Scan(&user.Name, &user.Email, &user.Password)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			fmt.Println("User not found.")
