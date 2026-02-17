@@ -9,7 +9,7 @@ import (
 
 func UserRegisterRequestValidator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var RequestPayload = registerUserRequest{}
+		var RequestPayload = RegisterUserRequest{}
 		if payloadErr := utils.ReadJsonBody(r, &RequestPayload); payloadErr != nil {
 			utils.WriteJsonErrorResponse(w, http.StatusBadRequest, "Json encoding error.", payloadErr)
 			return
@@ -29,7 +29,7 @@ func UserRegisterRequestValidator(next http.Handler) http.Handler {
 
 func UserUpdateRequestValidator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var RequestPayload = updateUserRequest{}
+		var RequestPayload = UpdateUserRequest{}
 		if payloadErr := utils.ReadJsonBody(r, &RequestPayload); payloadErr != nil {
 			utils.WriteJsonErrorResponse(w, http.StatusBadRequest, "Json encoding error.", payloadErr)
 			return
@@ -37,6 +37,10 @@ func UserUpdateRequestValidator(next http.Handler) http.Handler {
 		fmt.Println("update payload received.")
 
 		// validation logic for the user registration payload
+
+		req_context := r.Context()                                              // parent context -> get the context from the request
+		ctx := context.WithValue(req_context, "update_payload", RequestPayload) // create a new context with the validated payload
+		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
 	})
